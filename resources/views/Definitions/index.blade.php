@@ -44,7 +44,7 @@
             <th class="p-1 px-2 text-left">Word Type</th>
 {{--            <th class="p-1 px-2 text-left">Rating</th>--}}
             <th class="p-1 px-2 text-left">Definition</th>
-            <th class="p-2 text-left">Actions</th>
+            <th class="p-2 text-right">Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -73,7 +73,7 @@
                     {{ Str::limit($definition->definition, 50) }}
                 </td>
 
-                <td class="p-2">
+                <td class="p-2 text-right">
                     <a href="{{route('definitions.show',$definition)}}"
                        class="text-center p-2 grow rounded-l-md
                bg-green-500 text-white dark:bg-green-800
@@ -81,6 +81,13 @@
                 transition ease-in-out
                 duration-350">            <i class="fa fa-eye" ></i>
                         <span class="sr-only">Show</span></a>
+                    <a href="{{route('definitions.add',$definition)}}"
+                       class="text-center p-2 grow
+               bg-green-500 text-white dark:bg-blue-800
+                hover:bg-blue-900 dark:hover:bg-blue-500
+                transition ease-in-out
+                duration-350">            <i class="fa fa-plus" ></i>
+                        <span class="sr-only">Add</span></a>
 
                     <a href="{{route('definitions.edit',['definition'=>$definition])}}"
                        class="text-center p-2 grow
@@ -99,7 +106,9 @@
                         <span class="sr-only">Delete</span></a>
                 </td>
             </tr>
+
         @endforeach
+
         </tbody>
         <tfoot>
         <tr>

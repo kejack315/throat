@@ -27,8 +27,6 @@
 </head>
 <body class="font-sans antialiased">
 <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-
-
     @include('layouts.navigation')
 
     @if (Route::has('login'))
@@ -59,6 +57,14 @@
                      rounded sm:rounded-lg shadow-md ">
         {{ $slot }}
     </main>
+    <!-- footer -->
+    <footer class="bg-gray-200 dark:bg-gray-700 p-4 text-center fixed bottom-0 left-0 right-0">
+        &copy; {{ date('Y') }} ZKE LARAVEL |
+        <a href="/home" class="bg-gray-200 dark:bg-gray-700">Home</a> |
+        <a href="/privacy" class="bg-gray-200 dark:bg-gray-700">Privacy</a> |
+        <a href="/contact" class="bg-gray-200 dark:bg-gray-700">Contact Us</a>
+    </footer>
+
 </div>
 </body>
 </html>

@@ -27,7 +27,7 @@ class DefinitionController extends Controller
 
     public function index()
     {
-        $definitions = Definition::with('word','wordType', 'user')->latest()->paginate(10);
+        $definitions = Definition::with('word','wordType', 'user')->latest()->paginate(5);
         return view('definitions.index', compact('definitions'));
     }
 
@@ -57,10 +57,15 @@ class DefinitionController extends Controller
 
         return view('definitions.show', compact('definition', 'word', 'ratings'));
     }
+    public function add(Definition $definition)
+    {
+        $definitions = Definition::all(); // 添加此行以定义 $definitions 变量
+        $wordTypes = WordType::all();
+        $ratings = Rating::all();
 
-
-
-
+        // 传递表单请求数据到视图，包括 'definition' 字段
+        return view('definitions.add', compact('definition', 'definitions', 'wordTypes', 'ratings'));
+    }
 
 
     public function edit(Definition $definition)
@@ -73,8 +78,8 @@ class DefinitionController extends Controller
 
         $definitions = Definition::all();
         $wordTypes = WordType::all();
-
-        return view('definitions.edit', compact('definition', 'definitions', 'wordTypes'));
+        $ratings = Rating::all();
+        return view('definitions.edit', compact('definition', 'definitions', 'wordTypes','ratings'));
     }
 
 
@@ -112,32 +117,42 @@ class DefinitionController extends Controller
         if (!$user) {
             $user = User::find(1); // 使用适当的方法查找默认用户，这里假设默认用户的模型是 User
         }
-        $definition = Definition::create([
+        $definition = Definition::firstOrcreate([
             'definition' => $seedDefinition['definition'],
             'user_id' => $user->id, // 使用当前用户或默认用户的ID
         ]);
 
         $rating = Rating::firstOrCreate(['stars' => $seedDefinition['stars']]);
         $definition->ratings()->attach($rating, ['stars' => $seedDefinition['stars']]);
-
-        $wordType = WordType::firstWhere('name', $seedDefinition['word_type']);
-
-        if (is_null($wordType)) {
-            $wordType = WordType::create([
-                'code' => Str::upper(Str::substr(str_shuffle($seedDefinition['word_type']), 0, 2)),
-                'name' => $seedDefinition['word_type'],
-            ]);
-        }
-
-        $word = Word::firstWhere('word', $seedDefinition['word']);
-
-        if (is_null($word)) {
-            $word = Word::create([
-                'word' => $seedDefinition['word'],
+        $wordType = WordType::firstOrCreate(
+            ['name' => $seedDefinition['word_type']]
+        );
+        $word = Word::firstOrCreate(
+            ['word' => $seedDefinition['word']],
+            [
                 'word_type_id' => $wordType->id,
                 'user_id' => $user->id, // 使用当前用户或默认用户的ID
-            ]);
-        }
+            ]
+        );
+
+//        $wordType = WordType::firstWhere('name', $seedDefinition['word_type']);
+//
+//        if (is_null($wordType)) {
+//            $wordType = WordType::create([
+//                'code' => Str::upper(Str::substr(str_shuffle($seedDefinition['word_type']), 0, 2)),
+//                'name' => $seedDefinition['word_type'],
+//            ]);
+//        }
+
+//        $word = Word::firstWhere('word', $seedDefinition['word']);
+//
+//        if (is_null($word)) {
+//            $word = Word::create([
+//                'word' => $seedDefinition['word'],
+//                'word_type_id' => $wordType->id,
+//                'user_id' => $user->id, // 使用当前用户或默认用户的ID
+//            ]);
+//        }
 
         $word->definitions()->save($definition);
         // 可以添加成功后的重定向或其他逻辑
@@ -152,43 +167,52 @@ class DefinitionController extends Controller
      */
 
 
-    // 更新Word模型
     public function update(UpdateDefinitionRequest $request, Definition $definition)
     {
-        $validated = $request->validated();
+        $seedDefinition = $request->only(['word', 'definition', 'word_type', 'stars']);
         if ($definition->user_id !== auth()->id()) {
             abort(403, 'Unauthorized');
         }
+
+        // 更新Definition模型
         $definition->update([
-            'word' => $validated['word'],
-//            'word_type_id' => $validated['word_type_id'],
+            'word' => $seedDefinition['word'],
+            'definition' => $seedDefinition['definition'],
+            'word_type' => $seedDefinition['word_type'],
             // 其他需要更新的字段
         ]);
 
-        // 更新相关的Definition
-        foreach ($definition->definitions as $definition) {
-            $definition->update([
-                'definition' => $validated['definition'],
-                // 其他需要更新的字段
-            ]);
-        }
-
         // 更新或创建相关的WordType
-        $wordType = WordType::firstWhere('name', $validated['word_type']);
-        if (is_null($wordType)) {
-            $wordType = WordType::create([
-                'code' => Str::upper(Str::substr(str_shuffle($validated['word_type']), 0, 2)),
-                'name' => $validated['word_type'],
+        $wordType = WordType::firstWhere('name', $seedDefinition['word_type']);
+        //更新当前rating
+        $rating = Rating::where('stars', $seedDefinition['stars'])->first();
+
+        if (is_null($rating)) {
+            $rating = Rating::create([
+                'stars' => $seedDefinition['stars'],
             ]);
         }
+        $definition->ratings()->sync([$rating->id => ['stars' => $seedDefinition['stars']]]);
+        //可添加多个rating
+//        $rating = Rating::firstOrCreate(['stars' => $seedDefinition['stars']]);
+//                if (is_null($rating)) {
+//            $rating = Rating::create([
+//                'stars' => $seedDefinition['stars'],
+//            ]);
+//        }
+//        $definition->ratings()->attach($rating, ['stars' => $seedDefinition['stars']]);
 
-        // 更新Word模型的word_type_id
-        $definition->update(['word_type_id' => $wordType->id]);
-
+//         更新Word模型的word_type_id
+        $definition->word->update(['word_type_id' => $wordType->id]);
+//
         return redirect(route('definitions.index'))
             ->with('updated', "{$definition->word}")
             ->with('messageType', 'updated');
     }
+
+
+
+
 
 
 

@@ -23,7 +23,7 @@ class WordController extends Controller
 //    }
     public function index()
 {
-    $words = Word::query()->latest()->paginate(10);
+    $words = Word::query()->latest()->paginate(5);
     return view('words.index',compact('words'));
 }
 

@@ -116,14 +116,17 @@ Route::put('/users/{user}', [UserController::class, 'update'])->name('users.upda
 //Route::patch('/definitions/{definition}', [DefinitionController::class, 'update'])->name('definitions.update.patch');
 //Route::put('/definitions/{definition}', [DefinitionController::class, 'update'])->name('definitions.update.put');
 
-Route::middleware('auth')->group(function (){
 
-    Route::get('/definitions/add', [DefinitionController::class, 'create'])->name('definitions.add');
+Route::middleware('auth')->group(function (){
     Route::resource('definitions', DefinitionController::class)->except(['index','show']);
     Route::get('/definitions/{definition}/delete',[DefinitionController::class,'delete'])->name('definitions.delete');
     Route::patch('/definitions/{definition}', [DefinitionController::class, 'update'])->name('definitions.update.patch');
 });
+Route::get('/definitions/{definition}/add', [DefinitionController::class, 'add'])->name('definitions.add');
+Route::post('/definitions/{definition}/add', [DefinitionController::class, 'store'])->name('definitions_add.store');
+
 Route::resource('definitions', DefinitionController::class)->only(['index','show']);
+
 // GET: Index, Add/Create
 //Route::get('/ratings', [RatingController::class, 'index'])->name('ratings.index');
 

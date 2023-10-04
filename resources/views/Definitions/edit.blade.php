@@ -39,6 +39,17 @@
                        value="{{ old('definition') ?? $definition->definition }}">
             </div>
 
+            <div class="flex flex-row gap-4 rounded-md bg-gray-200 dark:bg-gray-900">
+                <label for="stars" class="p-2 w-1/6 rounded-l-md bg-gray-500 dark:bg-gray-800 text-gray-100">
+                    {{ __("Rating") }}
+                </label>
+                <select id="stars" name="stars" class="p-2 w-5/6 bg-gray-200 dark:bg-gray-900">
+                    @for ($i = 0; $i <= 10; $i++)
+                        <option value="{{ $i }}" {{ old('stars') == $i ? 'selected' : '' }}>{{ $i }}</option>
+                    @endfor
+                </select>
+            </div>
+
 
             <div class="flex flex-row gap-4 rounded-md bg-gray-200 dark:bg-gray-900">
                 <label for="word_type" class="p-2 w-1/6 rounded-l-md bg-gray-500 dark:bg-gray-800 text-gray-100">

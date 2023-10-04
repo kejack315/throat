@@ -7,17 +7,17 @@ use Illuminate\View\View;
 
 class StaticPageController extends Controller
 {
-    public function home(): View
+    public function home(): \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
     {
         return view('static.home');
     }
 
-    public function privacyPolicy(): View
+    public function privacyPolicy(): \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
     {
         return view('static.privacy'); // 修正拼写错误
     }
 
-    public function contact(): View
+    public function contact(): \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
     {
         return view('static.contact');
     }
