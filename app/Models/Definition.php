@@ -79,5 +79,9 @@ class Definition extends Model
 //        return $this->hasMany(DefinitionRating::class);
 //    }
 
+    public function averageRating()
+    {
+        return $this->ratings->avg('stars');
+    }
 
 }

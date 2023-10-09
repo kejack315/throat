@@ -98,7 +98,7 @@
                         <span class="sr-only">Edit</span></a>
 
                     <a href="{{route('definitions.delete',['definition'=>$definition])}}"
-                       class="text-center p-2 grow rounded-r-md
+                       class="text-right p-2 grow rounded-r-md
                bg-red-500 text-white dark:bg-red-800
                 hover:bg-red-900 dark:hover:bg-red-500
                 transition ease-in-out
