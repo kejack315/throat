@@ -13,7 +13,9 @@ return new class extends Migration {
         Schema::create('word_types', function (Blueprint $table) {
             $table->id();
             $table->string("code", 2)->unique();
+//            $table->string('code',2)->nullable();
             $table->string("name", 32)->unique();
+//            $table->string("name", 32);
             $table->timestamps();
         });
     }

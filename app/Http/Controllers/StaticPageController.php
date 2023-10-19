@@ -21,5 +21,18 @@ class StaticPageController extends Controller
     {
         return view('static.contact');
     }
+
+    public function conditions(): \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
+    {
+        return view('static.terms-and-conditions');
+    }
+    public function color(): \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
+    {
+        return view('static.color');
+    }
+    public function icons(): \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
+    {
+        return view('static.icons');
+    }
 }
 

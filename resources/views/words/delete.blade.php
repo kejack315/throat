@@ -11,7 +11,7 @@
         </h3>
 
         <p class="text-lg bg-red-500 text-white py-6 px-4 mb-6 rounded-lg">Please confirm you wish to delete this
-            user.</p>
+            Word.</p>
 
         <div class="flex flex-row gap-4 rounded-md bg-gray-200 dark:bg-gray-900">
             <p class="p-2 w-1/6 rounded-l-md bg-gray-500 dark:bg-gray-800 text-gray-100">

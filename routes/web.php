@@ -7,6 +7,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StaticPageController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WordController;
+use App\Http\Controllers\WordTypeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -39,23 +40,16 @@ Route::get('/', function () {
 //    [\App\Http\Controllers\RatingController::class, 'show']
 //)->name('ratings.show');
 
-/**
- * Routes for Word Types
- *
- */
-Route::get('/wordtypes',
-    [\App\Http\Controllers\WordTypeController::class, 'index']
-)->name('wordtypes.index');
 
-Route::get('/wordtypes/{wordType}',
-    [\App\Http\Controllers\WordTypeController::class, 'show']
-)->name('wordtypes.show');
 
 
 /* --------------------------------------------- */
 Route::get('/home',[StaticPageController::class,'home'])->name('static.home');
 Route::get('/privacy',[StaticPageController::class,'privacyPolicy'])->name('static.privacy');
 Route::get('/contact',[StaticPageController::class,'contact'])->name('static.contact');
+Route::get('/color',[StaticPageController::class,'color'])->name('static.color');
+Route::get('/icons',[StaticPageController::class,'icons'])->name('static.icons');
+Route::get('/terms-and-conditions',[StaticPageController::class,'conditions'])->name('static.terms-and-conditions');
 
 //Route::get('/dashboard', function () {
 //    return view('dashboard');
@@ -91,7 +85,36 @@ Route::post('/words', [WordController::class, 'store'])->name('words.store');
 Route::delete('/words/{word}', [WordController::class, 'destroy'])->name('words.destroy');
 Route::patch('/words/{word}', [WordController::class, 'update'])->name('words.update.patch');
 Route::put('/words/{word}', [WordController::class, 'update'])->name('words.update.put');
+/**
+ * Routes for Word Types
+ *
+ */
+Route::resource('wordtypes', WordTypeController::class)->except(['index', 'show','edit']);
 
+// 单独为index和show方法创建路由
+Route::get('/wordtypes', [WordTypeController::class, 'index'])->name('wordtypes.index');
+Route::get('/wordtypes/{wordType}', [WordTypeController::class, 'show'])->name('wordtypes.show');
+Route::get('/wordtypes/{wordType}/edit', [WordTypeController::class, 'edit'])->name('wordtypes.edit');
+
+// 为delete方法创建单独的路由
+Route::get('/wordtypes/{wordType}/delete', [WordTypeController::class, 'delete'])->name('wordtypes.delete');
+Route::delete('/wordtypes/{wordType}', [WordTypeController::class, 'destroy'])->name('wordtypes.destroy');
+
+//Route::delete('/wordtypes/{wordType}', [WordController::class, 'destroy'])->name('wordtypes.destroy');
+//Route::patch('/wordtypes/{wordType}', [WordController::class, 'update'])->name('wordtypes.update.patch');
+//Route::put('/wordtypes/{wordType}', [WordController::class, 'update'])->name('wordtypes.update.put');
+
+//Route::get('/wordtypes/create', [WordTypeController::class, 'create'])->name('wordtypes.create');
+//Route::resource('wordtypes', WordTypeController::class)->except(['index','show']);
+//Route::get('/wordtypes/{wordtype}/delete',[WordTypeController::class,'delete'])->name('wordtypes.delete');
+//Route::patch('/wordtypes/{wordtype}', [WordTypeController::class, 'update'])->name('wordtypes.update.patch');
+//Route::get('/wordtypes',
+//    [\App\Http\Controllers\WordTypeController::class, 'index']
+//)->name('wordtypes.index');
+//
+//Route::get('/wordtypes/{wordType}',
+//    [\App\Http\Controllers\WordTypeController::class, 'show']
+//)->name('wordtypes.show');
 
 //route for user
 Route::get('/users', [UserController::class, 'index'])->name('users.index');

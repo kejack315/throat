@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Definition;
+use App\Models\Word;
 use App\Models\WordType;
 use App\Http\Requests\StoreWordTypeRequest;
 use App\Http\Requests\UpdateWordTypeRequest;
+use Illuminate\Support\Facades\DB;
 
 class WordTypeController extends Controller
 {
@@ -29,7 +32,8 @@ class WordTypeController extends Controller
      */
     public function create()
     {
-        //
+        $wordTypes = WordType::all();
+        return view('wordtypes.create',compact(['wordTypes']));
     }
 
     /**
@@ -51,7 +55,8 @@ class WordTypeController extends Controller
      */
     public function show(WordType $wordType)
     {
-        return view('wordtypes.show', compact(['wordType']));
+        $wordTypes = WordType::all();
+        return view('wordtypes.show', compact(['wordType','wordTypes']));
     }
 
     /**
@@ -59,7 +64,8 @@ class WordTypeController extends Controller
      */
     public function edit(WordType $wordType)
     {
-        //
+        $wordTypes = WordType::all();
+        return view('wordtypes.edit', compact(['wordType','wordTypes']));
     }
 
     /**
@@ -73,8 +79,35 @@ class WordTypeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(WordType $wordType)
+    public function delete(WordType $wordType)
     {
-        //
+        $wordTypes = WordType::all();
+        return view('wordtypes.delete', compact('wordType','wordTypes'));
     }
+
+    public function destroy($wordTypeId)
+    {
+        $wordType = WordType::find($wordTypeId);
+        $name = $wordType->name;
+
+        // Check if "unknown" WordType exists
+        $unknownWordType = WordType::where('name', 'unknown')->first();
+
+        // If it doesn't, create it
+        if(!$unknownWordType) {
+            $unknownWordType = WordType::create(['name' => 'unknown']);
+        }
+
+        // Update the word_type_id in Word and Definition tables before deleting the WordType
+        Word::where('word_type_id', $wordTypeId)->update(['word_type_id' => $unknownWordType->id]);
+        Definition::where('word_type_id', $wordTypeId)->update(['word_type_id' => $unknownWordType->id]);
+
+        // Now, you can safely delete the WordType
+        $wordType->delete();
+
+        return redirect(route('wordtypes.index'))->with('deleted', $name);
+    }
+
+
+
 }

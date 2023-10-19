@@ -40,5 +40,10 @@ class WordType extends Model
         return $this->hasMany(Word::class);
     }
 
+    public function definitions()
+    {
+        return $this->hasMany(Definition::class);
+    }
+
 
 }

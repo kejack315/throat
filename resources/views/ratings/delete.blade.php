@@ -22,7 +22,7 @@
                       text-gray-100">
                 Name
             </p>
-            <p class="p-2 w-5/6">{{ $rating->name }}</p>
+            <p class="p-2 w-5/6 text-white">{{ $rating->name }}</p>
         </div>
 
         <div class="flex flex-row gap-4 rounded-md
@@ -32,7 +32,7 @@
                       text-gray-100">
                 Icon
             </p>
-            <p class="p-2 w-5/6">
+            <p class="p-2 w-5/6 text-white">
                 (<i class="fa fa-{{$rating->icon}}"></i>) {{ $rating->icon }}
             </p>
         </div>
@@ -44,7 +44,7 @@
                       text-gray-100">
                 Stars
             </p>
-            <p class="p-2 w-5/6">{{ $rating->stars }} </p>
+            <p class="p-2 w-5/6 text-white">{{ $rating->stars }} </p>
         </div>
 
         <div class="flex flex-row gap-4 rounded-md
@@ -54,7 +54,7 @@
                       text-gray-100">
                 Created At
             </p>
-            <p class="p-2 w-5/6">{{ $rating->created_at }} </p>
+            <p class="p-2 w-5/6 text-white">{{ $rating->created_at }} </p>
         </div>
 
         <div class="flex flex-row gap-4 rounded-md
@@ -64,7 +64,7 @@
                       text-gray-100">
                 Updated At
             </p>
-            <p class="p-2 w-5/6">{{ $rating->updated_at }} </p>
+            <p class="p-2 w-5/6 text-white">{{ $rating->updated_at }} </p>
         </div>
 
         <p class="flex flex-row md:w-13 w-full rounded-md">

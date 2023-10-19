@@ -58,12 +58,16 @@
         {{ $slot }}
     </main>
     <!-- footer -->
-    <footer class="bg-gray-200 dark:bg-gray-700 p-4 text-center bottom-0 left-0 right-0">
+    <footer class="bg-gray-200 dark:bg-gray-700 p-4 text-center bottom-0 left-0 right-0 fixed z-50">
         &copy; {{ date('Y') }} ZKE LARAVEL |
         <a href="/home" class="bg-gray-200 dark:bg-gray-700">Home</a> |
         <a href="/privacy" class="bg-gray-200 dark:bg-gray-700">Privacy</a> |
-        <a href="/contact" class="bg-gray-200 dark:bg-gray-700">Contact Us</a>
+        <a href="/contact" class="bg-gray-200 dark:bg-gray-700">Contact Us</a> |
+        <a href="/color" class="bg-gray-200 dark:bg-gray-700">Color</a> |
+        <a href="/icons" class="bg-gray-200 dark:bg-gray-700">Icons</a> |
+        <a href="/terms-and-conditions" class="bg-gray-200 dark:bg-gray-700">Terms-and-conditions</a>
     </footer>
+
 
 </div>
 </body>

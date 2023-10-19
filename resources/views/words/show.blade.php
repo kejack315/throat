@@ -26,7 +26,6 @@
                     {{ Str::limit($definition->definition, 50) }}<br>
                 @endforeach
             </p>
-
         </div>
 
         <div class="flex flex-row gap-4 rounded-md bg-gray-200 dark:bg-gray-900">
