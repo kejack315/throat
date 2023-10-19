@@ -1,5 +1,5 @@
 # THROAT
-![Image Description](img.jpg)
+![Image Description](img.png)
 Terrifyingly Huge Resource of Organised Acronyms and Terminology
 
 *This in itself is a backcronym.*
