@@ -102,9 +102,7 @@ class WordTypeController extends Controller
         Word::where('word_type_id', $wordTypeId)->update(['word_type_id' => $unknownWordType->id]);
         Definition::where('word_type_id', $wordTypeId)->update(['word_type_id' => $unknownWordType->id]);
 
-        // Now, you can safely delete the WordType
         $wordType->delete();
-
         return redirect(route('wordtypes.index'))->with('deleted', $name);
     }
 
