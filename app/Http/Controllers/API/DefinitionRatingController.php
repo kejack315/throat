@@ -10,6 +10,7 @@ use App\Models\DefinitionRatings;
 use App\Models\Rating;
 use App\Models\Word;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
@@ -22,13 +23,35 @@ class DefinitionRatingController extends Controller
 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function get(Request $request, DefinitionRatings $definitionRating): \Illuminate\Http\JsonResponse
+    function __construct()
     {
+        $this->middleware('permission:definition_browse', ['only' => ['show']]);
+        $this->middleware('permission:definition_create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:definition_edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:definition_delete', ['only' => ['destroy']]);
 
-
-        // 如果没有'search'查询参数，返回指定的单词和它的定义
-        return response()->json($definitionRating->load('definitions'));
     }
+    public function get(Request $request, Definition $definition): \Illuminate\Http\JsonResponse
+    {
+        // 获取当前登录的用户ID
+        $userId = $request->user()->id;
+
+        // 根据传入的Definition对象和用户ID查询相关的DefinitionRating
+        $definitionRating = DefinitionRating::with('definition')
+            ->where('user_id', $userId)
+            ->where('definition_id', $definition->id)
+            ->first();
+
+        if (!$definitionRating) {
+            return response()->json(['message' => 'No DefinitionRating found for the user.'], 404);
+        }
+
+        return response()->json($definitionRating);
+    }
+
+
+
+
 
 
     /**
@@ -37,11 +60,22 @@ class DefinitionRatingController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
+//    public function index(Request $request): \Illuminate\Http\JsonResponse
+//    {
+//        // 加载与每个DefinitionRating相关的Definition和Rating数据
+//        $definitionRatings = DefinitionRating::with(['definition', 'rating'])->get();
+//        return response()->json($definitionRatings);
+//    }
+
     public function index(Request $request): \Illuminate\Http\JsonResponse
     {
-        $definitionRating = DefinitionRating::all();
-        return response()->json($definitionRating);
+        // 加载与每个DefinitionRating相关的Definition和Rating数据
+        $definitionRatings = DefinitionRating::with(['definition', 'rating'])->get();
+        return response()->json($definitionRatings);
     }
+
+
+
 
     /**
      * Add task
@@ -52,51 +86,45 @@ class DefinitionRatingController extends Controller
      */
 //    public function add(Request $request)
 //    {
-//        $validator = Validator::make($request->post(), [
-//            'word' => 'required',
-//        ]);
+//        $ratingValue = $request->input('rating');
 //
+//        // 可能需要额外的验证和授权检查
+//        $rating = new Rating(['rating_value' => $ratingValue]);
+//        $rating->save();
+//        // 获取请求数据
+//        $data = $request->all();
 //
-//        if ($validator->fails()) {
-//            return response()->json($validator->errors(), 400);
-//        }
+//        // 创建记录
+//        $definitionRating = DefinitionRating::create($data);
 //
-//        try {
-//            $word = new Word();
-//            $word->word = $request->get('word');
-//
-//            if ($word->saveOrFail()) {
-//                return response()->json($word);
-//            }
-//
-//        } catch (Exception $e) {
-//            Log::debug('error creating task');
-//        }
-//
-//        return response()->json('error_creating', 400);
+//        return response()->json($definitionRating, 201);
 //    }
-    public function store(Request $request, Word $word) {
-        $ratingValue = $request->input('rating');
+    public function store(Request $request, Definition $definition) {
+        $stars = $request->input('stars');
+        $definitionId = $request->input('definition_id');
+        $definition = Definition::findOrFail($definitionId);
 
-        // 可能需要额外的验证和授权检查
-        $rating = new Rating(['rating_value' => $ratingValue]);
-        $rating->save();
+        // 查找给定星级的Rating，如果不存在则创建
+        $rating = Rating::firstOrCreate(['stars' => $stars]);
 
-        $definitionRating = new DefinitionRating();
-        // Assuming you have a definition associated with the word you can set the definition_id
-        $definitionRating->definition_id = $word->definitions->first()->id;  // Or however you determine the specific definition
-        $definitionRating->rating_id = $rating->id;
-        $definitionRating->save();
-
-        // Reload the word instance from the database to get fresh data
-        $word->refresh();
+        // 检查是否已经有了这个关联
+        if (!$definition->ratings()->where('ratings.id', $rating->id)->exists()) {
+            // 添加user_id到关联数据中
+            $definition->ratings()->attach($rating->id, ['stars' => $stars, 'user_id' => $request->user()->id]);
+        } else {
+            // 如果关联已经存在，只更新stars的值
+            $definition->ratings()->updateExistingPivot($rating->id, ['stars' => $stars]);
+        }
 
         return response()->json([
-            'message' => 'Rating added successfully',
-            'word' => $word,
-            'rating' => $rating
+            'message' => 'Rating added or updated successfully',
+            'definition' => $definition->definition,  // 假设Definition模型中有一个名为'definition'的属性或字段
+            'stars' => $rating->stars,
         ]);
     }
+
+
+
 
 
 
@@ -110,18 +138,31 @@ class DefinitionRatingController extends Controller
      * @throws \Throwable
      */
     public function update(Request $request, Definition $definition) {
-        $ratingValue = $request->input('rating');
+        $validatedData = $request->validate([
+            'stars' => 'required|integer|min:1|max:10',
+        ]);
 
-        $definitionRating = $definition->definitionRatings()->where('user_id', auth()->id())->first();
+        $stars = $validatedData['stars'];
 
-        if (!$definitionRating) {
-            return response()->json(['message' => 'Rating not found'], 404);
+        // 查找给定星级的Rating，如果不存在则创建
+        $rating = Rating::firstOrCreate(['stars' => $stars]);
+
+        // 检查是否已经有了这个关联
+        if (!$definition->ratings()->where('ratings.id', $rating->id)->exists()) {
+            $definition->ratings()->attach($rating->id, ['stars' => $stars]);
+        } else {
+            // 如果关联已经存在，只更新stars的值
+            $definition->ratings()->updateExistingPivot($rating->id, ['stars' => $stars]);
         }
 
-        $definitionRating->rating->update(['rating_value' => $ratingValue]);
-
-        return response()->json(['message' => 'Rating updated successfully']);
+        return response()->json([
+            'message' => 'Rating updated successfully',
+            'definition' => $definition->definition,  // 假设Definition模型中有一个名为'definition'的属性或字段
+            'stars' => $rating->stars,
+        ]);
     }
+
+
 
 
     /**
@@ -132,16 +173,40 @@ class DefinitionRatingController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Definition $definition) {
-        $definitionRating = $definition->definitionRatings()->where('user_id', auth()->id())->first();
+        // 获取当前用户为此定义评的分数
+//        $definitionRating = $definition->ratings()->where('user_id', auth()->id())->first();
 
-        if (!$definitionRating) {
-            return response()->json(['message' => 'Rating not found'], 404);
-        }
+//        if (!$definitionRating) {
+//            return response()->json(['message' => 'Rating not found'], 404);
+//        }
 
-        $definitionRating->rating->delete();
+        // 保存星级供后面使用
+//        $stars = $definitionRating->rating->stars;
+//
+//        // 删除这个评分，但不删除整个Rating
+//        $definition->ratings()->detach($definitionRating->rating_id);
+//
+//        return response()->json([
+//            'message' => 'Rating deleted successfully',
+//            'definition' => $definition->definition,  // 假设Definition模型中有一个名为'definition'的属性或字段
+//            'stars' => $stars,
 
-        return response()->json(['message' => 'Rating deleted successfully']);
+
+
+// 获取与此definition关联的stars值（可能有多个，但我们只获取第一个）
+        $stars = $definition->ratings()->first()->stars ?? null;
+
+        // 删除与此definition关联的所有ratings
+        $definition->ratings()->detach();
+
+        return response()->json([
+            'message' => 'Rating deleted successfully',
+            'definition' => $definition->definition,
+            'stars' => $stars,  // 这将返回之前关联的stars值，或者如果没有则返回null
+
+        ]);
     }
+
 
 
     /**

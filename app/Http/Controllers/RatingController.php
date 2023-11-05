@@ -8,6 +8,15 @@ use App\Http\Requests\UpdateRatingRequest;
 
 class RatingController extends Controller
 {
+    function __construct()
+
+    {
+        $this->middleware('permission:rating_browse', ['only' => ['view']]);
+        $this->middleware('permission:rating_create', ['only' => ['create','store']]);
+        $this->middleware('permission:rating_edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:rating_delete', ['only' => ['destroy']]);
+
+    }
     /**
      * Display a listing of the Rating Resource.
      */

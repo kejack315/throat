@@ -4,6 +4,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DefinitionController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StaticPageController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WordController;
@@ -41,15 +42,13 @@ Route::get('/', function () {
 //)->name('ratings.show');
 
 
-
-
 /* --------------------------------------------- */
-Route::get('/home',[StaticPageController::class,'home'])->name('static.home');
-Route::get('/privacy',[StaticPageController::class,'privacyPolicy'])->name('static.privacy');
-Route::get('/contact',[StaticPageController::class,'contact'])->name('static.contact');
-Route::get('/color',[StaticPageController::class,'color'])->name('static.color');
-Route::get('/icons',[StaticPageController::class,'icons'])->name('static.icons');
-Route::get('/terms-and-conditions',[StaticPageController::class,'conditions'])->name('static.terms-and-conditions');
+Route::get('/home', [StaticPageController::class, 'home'])->name('static.home');
+Route::get('/privacy', [StaticPageController::class, 'privacyPolicy'])->name('static.privacy');
+Route::get('/contact', [StaticPageController::class, 'contact'])->name('static.contact');
+Route::get('/color', [StaticPageController::class, 'color'])->name('static.color');
+Route::get('/icons', [StaticPageController::class, 'icons'])->name('static.icons');
+Route::get('/terms-and-conditions', [StaticPageController::class, 'conditions'])->name('static.terms-and-conditions');
 
 //Route::get('/dashboard', function () {
 //    return view('dashboard');
@@ -73,33 +72,33 @@ Route::middleware('auth')->group(function () {
 
 // http(s)://domain.com/ratings/2
 //route for word
-Route::get('/words', [WordController::class, 'index'])->name('words.index');
-Route::get('/words/add', [WordController::class, 'create'])->name('words.add');
-Route::get('/words/create', [WordController::class, 'create'])->name('words.create');
-
+Route::middleware('auth')->group(function () {
+    Route::get('/words/add', [WordController::class, 'create'])->name('words.add');
+    Route::get('/words/create', [WordController::class, 'create'])->name('words.create');
+    Route::get('/words/{word}/edit', [WordController::class, 'edit'])->name('words.edit');
+    Route::get('/words/{word}/delete', [WordController::class, 'delete'])->name('words.delete');
+    Route::post('/words', [WordController::class, 'store'])->name('words.store');
+    Route::delete('/words/{word}', [WordController::class, 'destroy'])->name('words.destroy');
+    Route::patch('/words/{word}', [WordController::class, 'update'])->name('words.update.patch');
+    Route::put('/words/{word}', [WordController::class, 'update'])->name('words.update.put');
+});
 Route::get('/words/{word}', [WordController::class, 'show'])->name('words.show');
-Route::get('/words/{word}/edit', [WordController::class, 'edit'])->name('words.edit');
-Route::get('/words/{word}/delete', [WordController::class, 'delete'])->name('words.delete');
-
-Route::post('/words', [WordController::class, 'store'])->name('words.store');
-Route::delete('/words/{word}', [WordController::class, 'destroy'])->name('words.destroy');
-Route::patch('/words/{word}', [WordController::class, 'update'])->name('words.update.patch');
-Route::put('/words/{word}', [WordController::class, 'update'])->name('words.update.put');
+Route::get('/words', [WordController::class, 'index'])->name('words.index');
 /**
  * Routes for Word Types
  *
  */
-Route::resource('wordtypes', WordTypeController::class)->except(['index', 'show','edit']);
-
+Route::group(['middleware' => ['auth']], function () {
+    Route::resource('wordtypes', WordTypeController::class)->except(['index', 'show', 'edit']);
 // 单独为index和show方法创建路由
-Route::get('/wordtypes', [WordTypeController::class, 'index'])->name('wordtypes.index');
-Route::get('/wordtypes/{wordType}', [WordTypeController::class, 'show'])->name('wordtypes.show');
-Route::get('/wordtypes/{wordType}/edit', [WordTypeController::class, 'edit'])->name('wordtypes.edit');
+    Route::get('/wordtypes', [WordTypeController::class, 'index'])->name('wordtypes.index');
+    Route::get('/wordtypes/{wordType}', [WordTypeController::class, 'show'])->name('wordtypes.show');
+    Route::get('/wordtypes/{wordType}/edit', [WordTypeController::class, 'edit'])->name('wordtypes.edit');
 
 // 为delete方法创建单独的路由
-Route::get('/wordtypes/{wordType}/delete', [WordTypeController::class, 'delete'])->name('wordtypes.delete');
-Route::delete('/wordtypes/{wordType}', [WordTypeController::class, 'destroy'])->name('wordtypes.destroy');
-
+    Route::get('/wordtypes/{wordType}/delete', [WordTypeController::class, 'delete'])->name('wordtypes.delete');
+    Route::delete('/wordtypes/{wordType}', [WordTypeController::class, 'destroy'])->name('wordtypes.destroy');
+});
 //Route::delete('/wordtypes/{wordType}', [WordController::class, 'destroy'])->name('wordtypes.destroy');
 //Route::patch('/wordtypes/{wordType}', [WordController::class, 'update'])->name('wordtypes.update.patch');
 //Route::put('/wordtypes/{wordType}', [WordController::class, 'update'])->name('wordtypes.update.put');
@@ -116,20 +115,27 @@ Route::delete('/wordtypes/{wordType}', [WordTypeController::class, 'destroy'])->
 //    [\App\Http\Controllers\WordTypeController::class, 'show']
 //)->name('wordtypes.show');
 
+Route::group(['middleware' => ['auth']], function () {
+    Route::resource('roles', RoleController::class);
+//    Route::resource('users', UserController::class);
+});
+
+
 //route for user
-Route::get('/users', [UserController::class, 'index'])->name('users.index');
-Route::get('/users/add', [UserController::class, 'create'])->name('users.add');
-Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+Route::group(['middleware' => ['auth']], function () {
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/users/add', [UserController::class, 'create'])->name('users.add');
+    Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
 
-Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
-Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
-Route::get('/users/{user}/delete', [UserController::class, 'delete'])->name('users.delete');
+    Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
+    Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::get('/users/{user}/delete', [UserController::class, 'delete'])->name('users.delete');
 
-Route::post('/users', [UserController::class, 'store'])->name('users.store');
-Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
-Route::patch('/users/{user}', [UserController::class, 'update'])->name('users.update.patch');
-Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update.put');
-
+    Route::post('/users', [UserController::class, 'store'])->name('users.store');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::patch('/users/{user}', [UserController::class, 'update'])->name('users.update.patch');
+    Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update.put');
+});
 //route for definition
 //Route::get('/definitions', [DefinitionController::class, 'index'])->name('definitions.index');
 //Route::get('/definitions/add', [DefinitionController::class, 'create'])->name('definitions.add');
@@ -145,15 +151,14 @@ Route::put('/users/{user}', [UserController::class, 'update'])->name('users.upda
 //Route::put('/definitions/{definition}', [DefinitionController::class, 'update'])->name('definitions.update.put');
 
 
-Route::middleware('auth')->group(function (){
-    Route::resource('definitions', DefinitionController::class)->except(['index','show']);
-    Route::get('/definitions/{definition}/delete',[DefinitionController::class,'delete'])->name('definitions.delete');
+Route::middleware('auth')->group(function () {
+    Route::resource('definitions', DefinitionController::class)->except(['index', 'show']);
+    Route::get('/definitions/{definition}/add', [DefinitionController::class, 'add'])->name('definitions.add');
+    Route::post('/definitions/{definition}/add', [DefinitionController::class, 'store'])->name('definitions_add.store');
+    Route::get('/definitions/{definition}/delete', [DefinitionController::class, 'delete'])->name('definitions.delete');
     Route::patch('/definitions/{definition}', [DefinitionController::class, 'update'])->name('definitions.update.patch');
 });
-Route::get('/definitions/{definition}/add', [DefinitionController::class, 'add'])->name('definitions.add');
-Route::post('/definitions/{definition}/add', [DefinitionController::class, 'store'])->name('definitions_add.store');
-
-Route::resource('definitions', DefinitionController::class)->only(['index','show']);
+Route::resource('definitions', DefinitionController::class)->only(['index', 'show']);
 
 // GET: Index, Add/Create
 //Route::get('/ratings', [RatingController::class, 'index'])->name('ratings.index');
@@ -167,15 +172,14 @@ Route::resource('definitions', DefinitionController::class)->only(['index','show
 //Route::resource('ratings', RatingController::class);
 
 
-
-Route::middleware('auth')->group(function (){
+Route::middleware('auth')->group(function () {
 
     Route::get('/ratings/add', [RatingController::class, 'create'])->name('ratings.add');
-    Route::resource('ratings', RatingController::class)->except(['index','show']);
-    Route::get('/ratings/{rating}/delete',[RatingController::class,'delete'])->name('ratings.delete');
+    Route::resource('ratings', RatingController::class)->except(['index', 'show']);
+    Route::get('/ratings/{rating}/delete', [RatingController::class, 'delete'])->name('ratings.delete');
     Route::patch('/ratings/{rating}', [RatingController::class, 'update'])->name('ratings.update.patch');
 });
-Route::resource('ratings', RatingController::class)->only(['index','show']);
+Route::resource('ratings', RatingController::class)->only(['index', 'show']);
 
 // Action routes
 // POST: stores the rating
@@ -193,3 +197,7 @@ require __DIR__ . '/auth.php';
 Route::get('/force-styles', function () {
     return view('force-styles');
 });
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

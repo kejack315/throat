@@ -1,4 +1,4 @@
-<x-guest-layout>
+<x-app-layout>
     <x-slot name="header">
         <div class="flex flex-row">
             <h2 class="font-semibold leading-tight
@@ -43,6 +43,7 @@
             <th class="p-1 px-2 text-left">Name</th>
             <th class="p-1 px-2 text-left">Passwords</th>
             <th class="p-1 px-2 text-left">Emails</th>
+            <th class="p-1 px-2 text-left">Roles</th>
             <th class="p-2 text-left">Actions</th>
         </tr>
         </thead>
@@ -54,14 +55,15 @@
 
                 <td class="p-2 px-2">{{ Str::limit($user->password, 7) }}</td>
                 <td class="p-2 px-2"> {{$user->email}}</td>
+                <td>
+                    @if(!empty($user->getRoleNames()))
+                        @foreach($user->getRoleNames() as $v)
+                            <label class="badge badge-success">{{ $v }}</label>
+                        @endforeach
+                    @endif
+                </td>
 
-{{--                    @for($count=0; $count <= $rating->stars; $count++)--}}
-{{--                        <i class="fa fa-{{ $rating->icon }}"></i>--}}
-{{--                    @endfor--}}
-                    {{--                    @for($count = 1; $count <= $rating->stars; $count++)--}}
-                    {{--                        <option value="star" @if(old('icon')??$rating->icon=='star') selected @endif>Star</option>--}}
-                    {{--                        <i class="fa fa-{{$rating->icon}}"></i>--}}
-                    {{--                    @endfor--}}
+
                 <td class="p-2">
 
                     <a href="{{route('users.show',$user)}}"
@@ -88,30 +90,6 @@
                 duration-350">            <i class="fa fa-times" ></i>
                         <span class="sr-only">Delete</span></a>
                 </td>
-{{--                <td class="p-2">--}}
-{{--                    <a href="{{route('ratings.show', $rating)--}}
-{{--}}"--}}
-{{--                       class="text-center p-2 grow rounded-l-md--}}
-{{--               bg-green-500 text-white dark:bg-green-800--}}
-{{--                hover:bg-green-900 dark:hover:bg-green-500--}}
-{{--                transition ease-in-out--}}
-{{--                duration-350">            <i class="fa fa-eye" ></i>--}}
-{{--                        <span class="sr-only">Show</span></a>--}}
-{{--                    <a href="{{route('ratings.edit',['rating'=>$rating])}}"--}}
-{{--                       class="text-center p-2 grow--}}
-{{--               bg-orange-500 text-white dark:bg-orange-800--}}
-{{--                hover:bg-orange-900 dark:hover:bg-orange-500--}}
-{{--                transition ease-in-out--}}
-{{--                duration-350">            <i class="fa fa-edit" ></i>--}}
-{{--                        <span class="sr-only">Edit</span></a>--}}
-{{--                    <a href="{{route('ratings.delete',['rating'=>$rating])}}"--}}
-{{--                       class="text-center p-2 grow rounded-r-md--}}
-{{--               bg-red-500 text-white dark:bg-red-800--}}
-{{--                hover:bg-red-900 dark:hover:bg-red-500--}}
-{{--                transition ease-in-out--}}
-{{--                duration-350">            <i class="fa fa-times" ></i>--}}
-{{--                        <span class="sr-only">Delete</span></a>--}}
-{{--                </td>--}}
             </tr>
         @endforeach
 
@@ -125,7 +103,7 @@
         </tfoot>
 
     </table>
-</x-guest-layout>
+</x-app-layout>
 
 
 

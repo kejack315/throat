@@ -10,7 +10,10 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Tailwindcss -->
+
     <script src="https://cdn.tailwindcss.com"></script>
+
+
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('style')

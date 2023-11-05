@@ -13,6 +13,14 @@ use Illuminate\Support\Str;
 
 class WordController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:word_browse', ['only' => ['show']]);
+        $this->middleware('permission:word_create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:word_edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:word_delete', ['only' => ['destroy']]);
+
+    }
     /**
      * Display a listing of the resource.
      */
@@ -22,11 +30,10 @@ class WordController extends Controller
 //        return view('words.index', compact('words'));
 //    }
     public function index()
-{
-    $words = Word::query()->latest()->paginate(5);
-    return view('words.index',compact('words'));
-}
-
+    {
+        $words = Word::query()->latest()->paginate(5);
+        return view('words.index', compact('words'));
+    }
 
 
     public function create()
@@ -48,7 +55,6 @@ class WordController extends Controller
 
         return view('words.edit', compact('word', 'definitions', 'wordTypes'));
     }
-
 
 
     /**
@@ -163,7 +169,7 @@ class WordController extends Controller
      */
 
 
-        // 更新Word模型
+    // 更新Word模型
     public function update(UpdateWordRequest $request, Word $word)
     {
         $validated = $request->validated();
@@ -198,7 +204,6 @@ class WordController extends Controller
             ->with('updated', "{$word->word}")
             ->with('messageType', 'updated');
     }
-
 
 
     public function destroy(Word $word)

@@ -11,6 +11,15 @@ use Illuminate\Support\Facades\DB;
 
 class WordTypeController extends Controller
 {
+    function __construct()
+
+    {
+        $this->middleware('permission:wordType_browse', ['only' => ['view']]);
+        $this->middleware('permission:wordType_create', ['only' => ['create','store']]);
+        $this->middleware('permission:wordType_edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:wordType_delete', ['only' => ['destroy']]);
+
+    }
     /**
      * Display a listing of the resource.
      *

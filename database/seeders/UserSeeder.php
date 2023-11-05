@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class UserSeeder extends Seeder
 {
@@ -64,16 +65,13 @@ class UserSeeder extends Seeder
                 'email' => $newUser['email'],
                 'password' => $newUser['password'],
             ]);
+            foreach ($newUser['roles'] as $roleName) {
+                $role = Role::firstOrCreate(['name' => $roleName]);  // 如果角色不存在，则创建
+                $user->assignRole($role);
+            }
 
-            //            foreach ($newUser['roles'] as $role) {
-            //                $newRole = Role::whereName($role)->first();
-            //                if (!is_null($newRole)) {
-            //                    $permissions = Permission::pluck('id', 'id')->all();
-            //                    $newRole->syncPermissions($permissions);
-            //                    $user->assignRole([$newRole->id]);
-            //                }
-            //            }
         }
+
 
     }
 }

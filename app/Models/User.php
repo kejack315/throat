@@ -58,15 +58,7 @@ class User extends Authenticatable
         return $this->hasMany(DefinitionRating::class);
     }
 
-//    public function isAdmin()
-//    {
-//        return $this->role === 'admin'; // 根据用户的角色字段判断是否为管理员
-//    }
-//
-//    public function isRegisteredUser()
-//    {
-//        return $this->role === 'registered'; // 根据用户的角色字段判断是否为注册用户
-//    }
+
 
 
 

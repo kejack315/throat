@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\Word;
 use App\Models\WordType;
 use Illuminate\Http\Request;
@@ -11,6 +12,14 @@ use Illuminate\Support\Facades\Validator;
 
 class WordController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:word_browse', ['only' => ['show']]);
+        $this->middleware('permission:word_create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:word_edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:word_delete', ['only' => ['destroy']]);
+
+    }
     /**
      * Get a task
      *
@@ -20,8 +29,6 @@ class WordController extends Controller
      */
     public function get(Request $request, Word $word): \Illuminate\Http\JsonResponse
     {
-
-
         // 如果没有'search'查询参数，返回指定的单词和它的定义
         return response()->json($word->load('definitions'));
     }
@@ -117,6 +124,16 @@ class WordController extends Controller
      */
     public function update(Request $request, Word $word): \Illuminate\Http\JsonResponse
     {
+
+        $loggedInUser = $request->user();
+        $wordUser = User::find($word->user_id); // 获取word的创建者
+
+        if ($wordUser && $wordUser->hasRole('admin')) {
+            if (!$loggedInUser->hasRole('admin')) {
+                return response()->json(['message' => 'You are not allowed to update words of admin.'], 403);
+            }
+        }
+
         $validator = Validator::make($request->post(), [
             'word' => 'required',
 
@@ -130,10 +147,6 @@ class WordController extends Controller
             if($request->has('word')){
                 $word->word = $request->get('word');
             }
-//            if($request->has('code')){
-//                $wordType->code = $request->get('code');
-//            }
-
 
             if ($word->updateOrFail()) {
                 return response()->json($word);

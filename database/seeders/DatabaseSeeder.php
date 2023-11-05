@@ -28,6 +28,8 @@ class DatabaseSeeder extends Seeder
             WordSeeder::class,
             DefinitionSeeder::class,
             DefinitionRatingSeeder::class,
+            CreateAdminUserSeeder::class,
+            PermissionTableSeeder::class,
         ]);
     }
 }

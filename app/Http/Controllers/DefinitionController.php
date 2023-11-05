@@ -12,10 +12,20 @@ use App\Models\Rating;
 use App\Models\User;
 use App\Models\Word;
 use App\Models\WordType;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 
 class DefinitionController extends Controller
 {
+    function __construct()
+
+    {
+        $this->middleware('permission:definition_browse', ['only' => ['show']]);
+        $this->middleware('permission:definition_create', ['only' => ['create','store']]);
+        $this->middleware('permission:definition_edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:definition_delete', ['only' => ['destroy']]);
+
+    }
     /**
      * Display a listing of the resource.
      */
@@ -211,16 +221,18 @@ class DefinitionController extends Controller
     }
 
 
-
-
-
-
-
-    public function destroy(Definition $definition)
+    public function destroy(Definition $definition, Request $request)
     {
+        $loggedInUser = $request->user(); // 获取当前登录的用户
 
-        $oldDefinition = $definition;
+        // 如果当前登录的用户不是条目的创建者，并且也不是管理员
+        if ($loggedInUser->id !== $definition->user_id && !$loggedInUser->hasRole('admin')) {
+            return redirect(route('definitions.index'))->with('error', 'You are not allowed to delete this definition.');
+        }
+
+        $oldDefinition = $definition->definition; // 将要显示的删除信息存储到变量中
         $definition->delete();
-        return redirect(route('definitions.index'))->with('deleted', "{$oldDefinition->definition}");
+        return redirect(route('definitions.index'))->with('deleted', "{$oldDefinition}");
     }
+
 }
