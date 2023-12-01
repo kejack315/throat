@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Validator;
 class WordTypeController extends Controller
 {
     /**
-     * Get a task
+     * Get a wordtype
      *
      * @param Request $request
 
@@ -23,7 +23,7 @@ class WordTypeController extends Controller
     }
 
     /**
-     * Get all tasks
+     * Get all wordtypes
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -34,7 +34,7 @@ class WordTypeController extends Controller
     }
 
     /**
-     * Add task
+     * Add wordtype
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -70,10 +70,10 @@ class WordTypeController extends Controller
     }
 
     /**
-     * Update the task
+     * Update the wordtype
      *
      * @param Request $request
-     * @param Task $task
+     * @param wordtype $wordType
      * @return \Illuminate\Http\JsonResponse
      * @throws \Throwable
      */
@@ -109,10 +109,10 @@ class WordTypeController extends Controller
     }
 
     /**
-     * Remove task
+     * Remove a wordtype
      *
      * @param Request $request
-     * @param Task $task
+     * @param wordtype $wordType
      * @return \Illuminate\Http\JsonResponse
      */
     public function remove(Request $request, WordType $wordType): \Illuminate\Http\JsonResponse
@@ -125,10 +125,10 @@ class WordTypeController extends Controller
     }
 
     /**
-     * Complete the task
+     * Complete the wordtype
      *
      * @param Request $request
-     * @param Task $task
+     * @param wordtype $wordType
      * @return \Illuminate\Http\JsonResponse
      * @throws \Throwable
      */

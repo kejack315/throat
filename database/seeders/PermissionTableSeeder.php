@@ -142,8 +142,25 @@ class PermissionTableSeeder extends Seeder
         $member->givePermissionTo([
             'definition_browse',
             'definition_search',
+            'definition_create',
+            'definition_edit',
+            'definition_delete',
+
             'word_browse',
-            'word_search', /* ... */]);
+            'word_search',
+            'word_create',
+            'word_edit',
+
+            'user_browse',
+            'user_search',
+            'user_create',
+            'user_edit',
+
+            'rating_browse',
+            'rating_search',
+            'rating_create',
+            'rating_edit',
+            'rating_delete', /* ... */]);
 
         $guest = Role::firstOrCreate(['name' => 'Guest']);
         // 根据你的需求分配给 Other 的权限

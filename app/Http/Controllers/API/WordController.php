@@ -10,18 +10,23 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
+/**
+ * @group Word API
+ *
+ * This API is for Word CRUD
+ */
 class WordController extends Controller
 {
     function __construct()
     {
-        $this->middleware('permission:word_browse', ['only' => ['show']]);
+//        $this->middleware('permission:word_browse', ['only' => ['show']]);
         $this->middleware('permission:word_create', ['only' => ['create', 'store']]);
         $this->middleware('permission:word_edit', ['only' => ['edit', 'update']]);
         $this->middleware('permission:word_delete', ['only' => ['destroy']]);
 
     }
     /**
-     * Get a task
+     * Get A Word
      *
      * @param Request $request
 
@@ -33,20 +38,28 @@ class WordController extends Controller
         return response()->json($word->load('definitions'));
     }
 
-    public function search(Request $request, Word $word):\Illuminate\Http\JsonResponse
+    /**
+     * Search a word by using word.
+     *
+     * This endpoint allows you to find a word in the list.
+     * It's a really useful endpoint, and you should play around
+     * with it for a bit.
+     * <aside class="notice">We mean it; you really should.😕</aside>
+     */
+
+    public function search(Request $request):\Illuminate\Http\JsonResponse
     {
-        // 如果有'search'查询参数
             $search = $request->input('query');
-            // 使用like查询进行模糊查询
+//dd($search);
             $words = Word::where('word', 'like', "%{$search}%")
-                ->with('definitions') // 预加载定义
+                ->with('definitions')
                 ->get();
             return response()->json($words);
     }
 
 
     /**
-     * Get all tasks
+     * Get all words, 10 per page
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -63,7 +76,7 @@ class WordController extends Controller
 
 
     /**
-     * Add task
+     * Add a word
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -94,7 +107,14 @@ class WordController extends Controller
 //
 //        return response()->json('error_creating', 400);
 //    }
-
+    /**
+     * Add a word to the list.
+     *
+     * This endpoint allows you to add a word to the list.
+     * It's a really useful endpoint, and you should play around
+     * with it for a bit.
+     * <aside class="notice">We mean it; you really should.😕</aside>
+     */
     public function add(Request $request)
     {
         // 获取请求数据
@@ -115,7 +135,7 @@ class WordController extends Controller
 
 
     /**
-     * Update the task
+     * Update a word
      *
      * @param Request $request
      * @param Task $task
@@ -160,7 +180,7 @@ class WordController extends Controller
     }
 
     /**
-     * Remove task
+     * Remove a word
      *
      * @param Request $request
      * @param Task $task
@@ -176,7 +196,7 @@ class WordController extends Controller
     }
 
     /**
-     * Complete the task
+     * Complete the word
      *
      * @param Request $request
      * @param Task $task

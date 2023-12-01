@@ -64,3 +64,67 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+# API Documentation
+
+## Overview
+
+Welcome to the [Throat] API documentation. This document provides comprehensive information on how to integrate and use our API to [brief description of the API's purpose].
+
+## Getting Started
+
+To begin using the [Throat] API, follow these steps:
+
+1. **Sign Up:** Create an account on Postman to obtain API credentials.
+
+2. **Authentication:** Retrieve your API key from the Developer Portal. All API requests must include this key in the header for authentication.
+
+3. **Endpoints:** Review the available API endpoints and understand the purpose of each.
+
+4. **Make Requests:** Start making requests to the API using your preferred programming language.
+
+## Endpoints and Requests
+
+### Endpoint: http://127.0.0.1:8000/
+
+1. Register and Login and logout
+
+GET http://127.0.0.1:8000/api/register
+POST http://127.0.0.1:8000/api/login
+POST http://127.0.0.1:8000/api/logout
+
+2. Word
+INDEX
+GET   http://127.0.0.1:8000/api/words
+SEARCH 
+GET http://127.0.0.1:8000/api/words/1
+CREATE
+POST http://127.0.0.1:8000/api/words
+WORD
+3. 
+3. DefinitionRating
+INDEX
+GET http://127.0.0.1:8000/api/definitionRatings
+SEARCH
+GET http://127.0.0.1:8000/api/definitionRatings/1
+UPDATE
+POST http://127.0.0.1:8000/api/definitionRatings/1
+STARS 
+
+Error Handling
+The API returns standard HTTP status codes. Check the response for error details.
+
+200 OK: Request successful.
+400 Bad Request: Invalid request.
+401 Unauthorized: Authentication failure.
+404 Not Found: Resource not found.
+
+Code Sample:
+PYTHON:
+import requests
+url = "http://127.0.0.1:8000/api"
+headers = {"Authorization": "Bearer YOUR_API_KEY"}
+response = requests.get(url, headers=headers)
+print(response.json())
+

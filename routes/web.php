@@ -25,21 +25,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
-//Route::get('/users/{id}',
-//    [\App\Http\Controllers\UserController::class, 'show']
-//)->name('users.show');
-/**
- * Routes for Ratings
- * GET POST UPDATE DESTROY INFO
- */
-//Route::get('/ratings',
-//    [\App\Http\Controllers\RatingController::class, 'index']
-//)->name('ratings.index');
-//
-//// http(s)://domain.com/ratings/2
-//Route::get('/ratings/{id}',
-//    [\App\Http\Controllers\RatingController::class, 'show']
-//)->name('ratings.show');
 
 
 /* --------------------------------------------- */
@@ -64,13 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-//user router
-//Route::resource('user', UserController::class)->except(['show', 'edit', 'update', 'delete']);
-//Route::get('/users',
-//    [\App\Http\Controllers\UserController::class, 'index']
-//)->name('users.index');
 
-// http(s)://domain.com/ratings/2
 //route for word
 Route::middleware('auth')->group(function () {
     Route::get('/words/add', [WordController::class, 'create'])->name('words.add');
@@ -88,32 +67,17 @@ Route::get('/words', [WordController::class, 'index'])->name('words.index');
  * Routes for Word Types
  *
  */
-Route::group(['middleware' => ['auth']], function () {
+Route::middleware(['auth'])->group(function () {
     Route::resource('wordtypes', WordTypeController::class)->except(['index', 'show', 'edit']);
-// 单独为index和show方法创建路由
+
     Route::get('/wordtypes', [WordTypeController::class, 'index'])->name('wordtypes.index');
     Route::get('/wordtypes/{wordType}', [WordTypeController::class, 'show'])->name('wordtypes.show');
     Route::get('/wordtypes/{wordType}/edit', [WordTypeController::class, 'edit'])->name('wordtypes.edit');
-
-// 为delete方法创建单独的路由
+    Route::patch('/wordtypes/{wordType}', [WordTypeController::class, 'update'])->name('wordtypes.update');
     Route::get('/wordtypes/{wordType}/delete', [WordTypeController::class, 'delete'])->name('wordtypes.delete');
     Route::delete('/wordtypes/{wordType}', [WordTypeController::class, 'destroy'])->name('wordtypes.destroy');
 });
-//Route::delete('/wordtypes/{wordType}', [WordController::class, 'destroy'])->name('wordtypes.destroy');
-//Route::patch('/wordtypes/{wordType}', [WordController::class, 'update'])->name('wordtypes.update.patch');
-//Route::put('/wordtypes/{wordType}', [WordController::class, 'update'])->name('wordtypes.update.put');
 
-//Route::get('/wordtypes/create', [WordTypeController::class, 'create'])->name('wordtypes.create');
-//Route::resource('wordtypes', WordTypeController::class)->except(['index','show']);
-//Route::get('/wordtypes/{wordtype}/delete',[WordTypeController::class,'delete'])->name('wordtypes.delete');
-//Route::patch('/wordtypes/{wordtype}', [WordTypeController::class, 'update'])->name('wordtypes.update.patch');
-//Route::get('/wordtypes',
-//    [\App\Http\Controllers\WordTypeController::class, 'index']
-//)->name('wordtypes.index');
-//
-//Route::get('/wordtypes/{wordType}',
-//    [\App\Http\Controllers\WordTypeController::class, 'show']
-//)->name('wordtypes.show');
 
 Route::group(['middleware' => ['auth']], function () {
     Route::resource('roles', RoleController::class);
@@ -150,7 +114,6 @@ Route::group(['middleware' => ['auth']], function () {
 //Route::patch('/definitions/{definition}', [DefinitionController::class, 'update'])->name('definitions.update.patch');
 //Route::put('/definitions/{definition}', [DefinitionController::class, 'update'])->name('definitions.update.put');
 
-
 Route::middleware('auth')->group(function () {
     Route::resource('definitions', DefinitionController::class)->except(['index', 'show']);
     Route::get('/definitions/{definition}/add', [DefinitionController::class, 'add'])->name('definitions.add');
@@ -158,6 +121,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/definitions/{definition}/delete', [DefinitionController::class, 'delete'])->name('definitions.delete');
     Route::patch('/definitions/{definition}', [DefinitionController::class, 'update'])->name('definitions.update.patch');
 });
+
 Route::resource('definitions', DefinitionController::class)->only(['index', 'show']);
 
 // GET: Index, Add/Create
@@ -200,4 +164,4 @@ Route::get('/force-styles', function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+//Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

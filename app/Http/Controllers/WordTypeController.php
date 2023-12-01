@@ -12,14 +12,13 @@ use Illuminate\Support\Facades\DB;
 class WordTypeController extends Controller
 {
     function __construct()
-
     {
         $this->middleware('permission:wordType_browse', ['only' => ['view']]);
         $this->middleware('permission:wordType_create', ['only' => ['create','store']]);
         $this->middleware('permission:wordType_edit', ['only' => ['edit','update']]);
         $this->middleware('permission:wordType_delete', ['only' => ['destroy']]);
-
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -73,7 +72,9 @@ class WordTypeController extends Controller
      */
     public function edit(WordType $wordType)
     {
+
         $wordTypes = WordType::all();
+
         return view('wordtypes.edit', compact(['wordType','wordTypes']));
     }
 
@@ -82,7 +83,10 @@ class WordTypeController extends Controller
      */
     public function update(UpdateWordTypeRequest $request, WordType $wordType)
     {
+        $wordType->update($request->validated());
+
         //
+        return redirect(route('wordtypes.index'))->with('success', 'WordType updated successfully.');
     }
 
     /**

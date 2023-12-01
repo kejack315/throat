@@ -38,7 +38,7 @@
                 </label>
                 <input id="definition" name="definition" type="text"
                        class="p-2 w-5/6 bg-gray-200 dark:bg-gray-900 rounded-r-md" value="{{ old('definition') }}"
-                       required>
+                       >
             </div>
 
             <div class="flex flex-row gap-4 rounded-md bg-gray-200 dark:bg-gray-900">

@@ -31,7 +31,7 @@ class WordController extends Controller
 //    }
     public function index()
     {
-        $words = Word::query()->latest()->paginate(5);
+        $words = Word::with('definitions')->latest()->paginate(5);
         return view('words.index', compact('words'));
     }
 
@@ -80,43 +80,31 @@ class WordController extends Controller
     public function store(StoreWordRequest $request)
     {
         $user = auth()->user();
-        $seedWord = $request->only(['word', 'definition', 'word_type']);
 
-        // 检查用户是否已登录，如果未登录则将 $user 设置为默认用户（ID为1）
+        // If the user is not logged in, use the default user (ID 1)
         if (!$user) {
-            $user = User::find(1); // 使用适当的方法查找默认用户，这里假设默认用户的模型是 User
+            $user = User::find(1);
         }
+        $word = Word::firstOrCreate(
+            ['word' => $request->input('word')],
+            [
+                'word_type_id' => WordType::firstOrCreate(['name' => $request->input('word_type')])->id,
+                'user_id' => $user->id,
+            ]
+        );
 
-        $definition = Definition::create([
-            'definition' => $seedWord['definition'],
-            'user_id' => $user->id, // 使用当前用户或默认用户的ID
-        ]);
+        if ($request->filled('definition')) {
+            $definition = Definition::firstOrCreate(
+                ['definition' => $request->input('definition')],
+                ['user_id' => $user->id]
+            );
 
-        $wordType = WordType::firstWhere('name', $seedWord['word_type']);
-
-        if (is_null($wordType)) {
-            $wordType = WordType::create([
-                'code' => Str::upper(Str::substr(str_shuffle($seedWord['word_type']), 0, 2)),
-                'name' => $seedWord['word_type'],
-            ]);
+            $word->definitions()->save($definition);
         }
-
-        $word = Word::firstWhere('word', $seedWord['word']);
-
-        if (is_null($word)) {
-            $word = Word::create([
-                'word' => $seedWord['word'],
-                'word_type_id' => $wordType->id,
-                'user_id' => $user->id, // 使用当前用户或默认用户的ID
-            ]);
-        }
-
-        $word->definitions()->save($definition);
-
-        // 可以添加成功后的重定向或其他逻辑
 
         return redirect()->route('words.index')->with('success', '单词已成功创建。');
     }
+
 
 
 // 如果需要设置user id的情况下：

@@ -60,19 +60,19 @@
         </div>
 
         <p class="flex flex-row md:w-13 w-full rounded-md">
-            <a href="{{ route('words.index') }}"
+            <a href="{{ route('wordtypes.index') }}"
                class="text-center p-2 grow rounded-l-md text-white bg-sky-500 hover:bg-sky-900 dark:bg-sky-800 dark:hover:bg-sky-500 transition ease-in-out duration-350">
                 <i class="fa fa-arrow-rotate-back"></i>
                 <span class="sr-only">Back</span>
             </a>
 
-            <a href="{{ route('words.edit', $wordType) }}"
+            <a href="{{ route('wordtypes.edit', $wordType) }}"
                class="text-center p-2 grow text-white bg-orange-500 hover:bg-orange-900 dark:bg-orange-800 dark:hover:bg-orange-500 transition ease-in-out duration-350">
                 <i class="fa fa-edit"></i>
                 <span class="sr-only">Edit</span>
             </a>
 
-            <a href="{{ route('words.delete', $wordType) }}"
+            <a href="{{ route('wordtypes.delete', $wordType) }}"
                onclick="return confirm('Delele Confirm?');"
                class="text-center p-2 grow rounded-r-md text-white bg-red-500 hover:bg-red-900 dark:bg-red-800 dark:hover:bg-red-500 transition ease-in-out duration-350">
                 <i class="fa fa-times"></i>

@@ -9,26 +9,31 @@
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200"/>
                     </a>
                 </div>
-
-                <!-- Navigation Links -->
+                        <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
+
                     <x-nav-link :href="route('welcome')" :active="request()->routeIs('welcome')">
                         {{ __('Welcome') }}
                     </x-nav-link>
+                    @auth()
+                        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                            {{ __('Dashboard') }}
+                        </x-nav-link>
                     <x-nav-link :href="route('ratings.index')" :active="request()->routeIs('ratings.index')">
                         {{ __('Rating') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('words.index')" :active="request()->routeIs('words.index')">
-                        {{ __('Word') }}
-                    </x-nav-link>
+
+
                     <x-nav-link :href="route('wordtypes.index')" :active="request()->routeIs('wordtypes.index')">
                         {{ __('WordType') }}
                     </x-nav-link>
+
                     <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
                         {{ __('User') }}
+                    </x-nav-link>
+                    @endauth
+                    <x-nav-link :href="route('words.index')" :active="request()->routeIs('words.index')">
+                        {{ __('Word') }}
                     </x-nav-link>
                     {{--                    <x-nav-link :href="route('wordType.index')" :active="request()->routeIs('wordType.index')">--}}
                     {{--                        {{ __('WordType') }}--}}
@@ -83,22 +88,22 @@
                             @auth
                                 <a href="{{ url('/dashboard') }}"
                                    class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Dashboard</a>
-                            @else
-                                <x-responsive-nav-link
-                                :href="route('welcome')"
-                                class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Welcome</a>>
-                                </x-responsive-nav-link>
-                                <x-responsive-nav-link
-                                    :href="route('login')"
-                                    class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Login</a>>
-                                </x-responsive-nav-link>
+{{--                            @else--}}
+{{--                                <x-responsive-nav-link--}}
+{{--                                :href="route('welcome')"--}}
+{{--                                class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Welcome</a>>--}}
+{{--                                </x-responsive-nav-link>--}}
+{{--                                <x-responsive-nav-link--}}
+{{--                                    :href="route('login')"--}}
+{{--                                    class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Login</a>>--}}
+{{--                                </x-responsive-nav-link>--}}
 {{--                                    <a href="{{ route('login') }}"--}}
 {{--                                   class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Log--}}
 {{--                                    in</a>--}}
-                                <x-responsive-nav-link
-                                    :href="route('register')"
-                                    class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Register</a>>
-                                </x-responsive-nav-link>
+{{--                                <x-responsive-nav-link--}}
+{{--                                    :href="route('register')"--}}
+{{--                                    class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Register</a>>--}}
+{{--                                </x-responsive-nav-link>--}}
 
 {{--                                @if (Route::has('register'))--}}
 {{--                                    <a href="{{ route('register') }}"--}}

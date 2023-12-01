@@ -10,6 +10,9 @@ use App\Models\User;
 
 class AuthController extends BaseController
 {
+    /**
+     * @unauthenticated
+     */
     public function signin(Request $request)
     {
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
@@ -23,6 +26,9 @@ class AuthController extends BaseController
             return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
         }
     }
+    /**
+     * @unauthenticated
+     */
     public function signup(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -47,10 +53,9 @@ class AuthController extends BaseController
 
     public function logout(Request $request)
     {
-        // 获取当前认证用户的token并使其失效
+
         $request->user()->currentAccessToken()->delete();
 
-        // 返回成功的响应
         return $this->sendResponse([], 'User logged out successfully.');
     }
 

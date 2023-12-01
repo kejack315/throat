@@ -35,6 +35,7 @@ class WordType extends Model
     protected $casts = [
     ];
 
+
     public function words()
     {
         return $this->hasMany(Word::class);

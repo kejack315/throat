@@ -16,13 +16,7 @@ use Illuminate\Support\Facades\Validator;
 
 class DefinitionRatingController extends Controller
 {
-    /**
-     * Get a task
-     *
-     * @param Request $request
 
-     * @return \Illuminate\Http\JsonResponse
-     */
     function __construct()
     {
         $this->middleware('permission:definition_browse', ['only' => ['show']]);
@@ -31,12 +25,19 @@ class DefinitionRatingController extends Controller
         $this->middleware('permission:definition_delete', ['only' => ['destroy']]);
 
     }
+    /**
+     * Get a Definition.
+     *
+     * This endpoint allows you to get a definition.
+     * It's a really useful endpoint, and you should play around
+     * with it for a bit.
+     * <aside class="notice">We mean it; you really should.😕</aside>
+     */
     public function get(Request $request, Definition $definition): \Illuminate\Http\JsonResponse
     {
-        // 获取当前登录的用户ID
+
         $userId = $request->user()->id;
 
-        // 根据传入的Definition对象和用户ID查询相关的DefinitionRating
         $definitionRating = DefinitionRating::with('definition')
             ->where('user_id', $userId)
             ->where('definition_id', $definition->id)
@@ -55,21 +56,21 @@ class DefinitionRatingController extends Controller
 
 
     /**
-     * Get all tasks
+     * Get all definition_ratings
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
 //    public function index(Request $request): \Illuminate\Http\JsonResponse
 //    {
-//        // 加载与每个DefinitionRating相关的Definition和Rating数据
+
 //        $definitionRatings = DefinitionRating::with(['definition', 'rating'])->get();
 //        return response()->json($definitionRatings);
 //    }
 
     public function index(Request $request): \Illuminate\Http\JsonResponse
     {
-        // 加载与每个DefinitionRating相关的Definition和Rating数据
+
         $definitionRatings = DefinitionRating::with(['definition', 'rating'])->get();
         return response()->json($definitionRatings);
     }
@@ -78,7 +79,7 @@ class DefinitionRatingController extends Controller
 
 
     /**
-     * Add task
+     * Add a Rating to a definition
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -88,37 +89,44 @@ class DefinitionRatingController extends Controller
 //    {
 //        $ratingValue = $request->input('rating');
 //
-//        // 可能需要额外的验证和授权检查
+
 //        $rating = new Rating(['rating_value' => $ratingValue]);
 //        $rating->save();
-//        // 获取请求数据
+
 //        $data = $request->all();
-//
-//        // 创建记录
+
 //        $definitionRating = DefinitionRating::create($data);
 //
 //        return response()->json($definitionRating, 201);
 //    }
+
+    /**
+     * Add a rating to a definition.
+     *
+     * This endpoint allows you to add a rating to the definition.
+     * It's a really useful endpoint, and you should play around
+     * with it for a bit.
+     * <aside class="notice">We mean it; you really should.😕</aside>
+     */
     public function store(Request $request, Definition $definition) {
         $stars = $request->input('stars');
         $definitionId = $request->input('definition_id');
         $definition = Definition::findOrFail($definitionId);
 
-        // 查找给定星级的Rating，如果不存在则创建
+
         $rating = Rating::firstOrCreate(['stars' => $stars]);
 
-        // 检查是否已经有了这个关联
         if (!$definition->ratings()->where('ratings.id', $rating->id)->exists()) {
-            // 添加user_id到关联数据中
+
             $definition->ratings()->attach($rating->id, ['stars' => $stars, 'user_id' => $request->user()->id]);
         } else {
-            // 如果关联已经存在，只更新stars的值
+
             $definition->ratings()->updateExistingPivot($rating->id, ['stars' => $stars]);
         }
 
         return response()->json([
             'message' => 'Rating added or updated successfully',
-            'definition' => $definition->definition,  // 假设Definition模型中有一个名为'definition'的属性或字段
+            'definition' => $definition->definition,
             'stars' => $rating->stars,
         ]);
     }
@@ -130,10 +138,10 @@ class DefinitionRatingController extends Controller
 
 
     /**
-     * Update the task
+     * Update the Rating for a definition
      *
      * @param Request $request
-     * @param Task $task
+     * @param definitionRating $definitionRating
      * @return \Illuminate\Http\JsonResponse
      * @throws \Throwable
      */
@@ -144,20 +152,20 @@ class DefinitionRatingController extends Controller
 
         $stars = $validatedData['stars'];
 
-        // 查找给定星级的Rating，如果不存在则创建
+
         $rating = Rating::firstOrCreate(['stars' => $stars]);
 
-        // 检查是否已经有了这个关联
+
         if (!$definition->ratings()->where('ratings.id', $rating->id)->exists()) {
             $definition->ratings()->attach($rating->id, ['stars' => $stars]);
         } else {
-            // 如果关联已经存在，只更新stars的值
+
             $definition->ratings()->updateExistingPivot($rating->id, ['stars' => $stars]);
         }
 
         return response()->json([
             'message' => 'Rating updated successfully',
-            'definition' => $definition->definition,  // 假设Definition模型中有一个名为'definition'的属性或字段
+            'definition' => $definition->definition,
             'stars' => $rating->stars,
         ]);
     }
@@ -166,10 +174,10 @@ class DefinitionRatingController extends Controller
 
 
     /**
-     * Remove task
+     * Remove a definition_rating
      *
      * @param Request $request
-     * @param Task $task
+     * @param definitionRating $definitionRating
      * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Definition $definition) {
@@ -210,10 +218,10 @@ class DefinitionRatingController extends Controller
 
 
     /**
-     * Complete the task
+     * Complete the definition_raating
      *
      * @param Request $request
-     * @param Task $task
+     * @param definitionRating $definitionRating
      * @return \Illuminate\Http\JsonResponse
      * @throws \Throwable
      */

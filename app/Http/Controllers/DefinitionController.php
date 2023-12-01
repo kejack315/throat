@@ -20,7 +20,7 @@ class DefinitionController extends Controller
     function __construct()
 
     {
-        $this->middleware('permission:definition_browse', ['only' => ['show']]);
+//        $this->middleware('permission:definition_browse', ['only' => ['show']]);
         $this->middleware('permission:definition_create', ['only' => ['create','store']]);
         $this->middleware('permission:definition_edit', ['only' => ['edit','update']]);
         $this->middleware('permission:definition_delete', ['only' => ['destroy']]);
@@ -49,31 +49,33 @@ class DefinitionController extends Controller
 
 //    public function show(Definition $definition)
 //    {
-//        // 获取当前定义的所有子定义
+
 //        $subDefinitions = $definition->definitions;
 //
 //        return view('definitions.show', compact('definition', 'subDefinitions'));
 //    }
 
+/**
+ *
+ */
     public function show(Definition $definition)
     {
-        // 获取与当前定义相关的所有评级
+
         $ratings = Rating::whereHas('definitions', function ($query) use ($definition) {
             $query->where('definition', $definition->definition);
         })->get();
 
-        // 只加载 word 列的数据
         $word = $definition->word;
 
         return view('definitions.show', compact('definition', 'word', 'ratings'));
     }
     public function add(Definition $definition)
     {
-        $definitions = Definition::all(); // 添加此行以定义 $definitions 变量
+        $definitions = Definition::all();
         $wordTypes = WordType::all();
         $ratings = Rating::all();
 
-        // 传递表单请求数据到视图，包括 'definition' 字段
+        // Pass the form request data to the view, including the 'definition' field.
         return view('definitions.add', compact('definition', 'definitions', 'wordTypes', 'ratings'));
     }
 
@@ -123,13 +125,13 @@ class DefinitionController extends Controller
 
         $user = auth()->user();
         $seedDefinition = $request->only(['user','word', 'definition', 'word_type','stars']);
-        // 检查用户是否已登录，如果未登录则将 $user 设置为默认用户（ID为1）
+        // Check if the user is logged in; if not, set $user to the default user (ID 1).
         if (!$user) {
-            $user = User::find(1); // 使用适当的方法查找默认用户，这里假设默认用户的模型是 User
+            $user = User::find(1);
         }
         $definition = Definition::firstOrcreate([
             'definition' => $seedDefinition['definition'],
-            'user_id' => $user->id, // 使用当前用户或默认用户的ID
+            'user_id' => $user->id,
         ]);
 
         $rating = Rating::firstOrCreate(['stars' => $seedDefinition['stars']]);
@@ -141,7 +143,7 @@ class DefinitionController extends Controller
             ['word' => $seedDefinition['word']],
             [
                 'word_type_id' => $wordType->id,
-                'user_id' => $user->id, // 使用当前用户或默认用户的ID
+                'user_id' => $user->id,
             ]
         );
 

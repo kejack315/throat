@@ -52,7 +52,7 @@
                 <td class="p-2 px-2">{{$loop->index + 1}}</td>
                 <td class="p-2 px-2">{{ Str::limit($word->word, 30) }}</td>
                 <td class="p-2 px-2">
-                    {{ $word->definitions->count() }}
+                    {{ $word->definitionCount() }}
                 </td>
                 <td class="p-2 px-2">{{ optional($word->wordType)->name }}</td>
                 <td class="p-2">

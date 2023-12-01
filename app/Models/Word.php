@@ -17,7 +17,6 @@ class Word extends Model
      */
     protected $fillable = [
         'word',
-        'definition',
         'word_type_id',
         'user_id'
     ];

@@ -59,6 +59,7 @@
                     <span class="sr-only">Delete</span></a>
             </td>
         </tr>
+
         @endforeach
         </tbody>
         <tfoot>

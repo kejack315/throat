@@ -17,8 +17,14 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+use DeDoc\Scramble\Controllers\ScrambleController;
+Route::view('docs/api', 'scramble::docs')->name('scramble.docs.api');
+
+
 Route::post('login', [AuthController::class, 'signin']);
 Route::post('register', [AuthController::class, 'signup']);
+Route::get('/words', [WordController::class, 'index']);
+Route::get('/words/search', [WordController::class, 'search']);
 
 Route::middleware('auth:sanctum')->group( function () {
 
@@ -34,7 +40,7 @@ Route::middleware('auth:sanctum')->group( function () {
 
     Route::post('/words', [WordController::class, 'add']);
     Route::get('/words/{word}', [WordController::class, 'get']);
-    Route::put('/words/{word}', [WordController::class, 'update']);
+    Route::put('/words', [WordController::class, 'update']);
     Route::delete('/words/{word}', [WordController::class, 'remove']);
     Route::put('/words/{word}/complete', [WordController::class, 'complete']);
 
@@ -45,8 +51,9 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::delete('/definitionRatings/{definition}', [DefinitionRatingController::class, 'destroy']);
     Route::put('/definitionRatings/{definition}/complete', [DefinitionRatingController::class, 'complete']);
 });
-Route::get('/words', [WordController::class, 'index']);
-Route::get('/words/search', [WordController::class, 'search'])->name('word.search');
+
+
+//Route::get('/words/search', [WordController::class, 'search'])->name('word.search');
 
 
 //Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
