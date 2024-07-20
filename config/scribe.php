@@ -225,7 +225,6 @@ return [
          * Options: query, body, basic, bearer, header (for custom header)
          */
         'in' => 'bearer',
-
         /*
          * The name of the auth parameter (eg token, key, apiKey) or header (eg Authorization, Api-Key).
          */
